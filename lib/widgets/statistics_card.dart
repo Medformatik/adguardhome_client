@@ -14,7 +14,7 @@ class StatisticsCard extends StatefulWidget {
   final Future<List<num>>? graphFuture;
 
   const StatisticsCard({
-    Key? key,
+    super.key,
     required this.primaryFuture,
     required this.title,
     this.textColor = Colors.black,
@@ -25,10 +25,10 @@ class StatisticsCard extends StatefulWidget {
     this.secondaryPrefix,
     this.secondarySuffix,
     this.graphFuture,
-  }) : super(key: key);
+  });
 
   @override
-  _StatisticsCardState createState() => _StatisticsCardState();
+  State<StatisticsCard> createState() => _StatisticsCardState();
 }
 
 class _StatisticsCardState extends State<StatisticsCard> {
@@ -67,7 +67,7 @@ class _StatisticsCardState extends State<StatisticsCard> {
                 Expanded(
                   child: Text(
                     widget.title,
-                    style: Theme.of(context).textTheme.headline6?.copyWith(color: widget.textColor),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(color: widget.textColor),
                   ),
                 ),
                 Column(
@@ -77,8 +77,8 @@ class _StatisticsCardState extends State<StatisticsCard> {
                       future: primaryFuture,
                       builder: (BuildContext context, AsyncSnapshot snapshot) {
                         return Text(
-                          snapshot.hasData ? (snapshot.data.toString() + (widget.primaryUnit != null ? " " + widget.primaryUnit! : "")) : "...",
-                          style: Theme.of(context).textTheme.subtitle2?.copyWith(color: widget.textColor, fontSize: 20.0),
+                          snapshot.hasData ? (snapshot.data.toString() + (widget.primaryUnit != null ? ' ${widget.primaryUnit!}' : '')) : '...',
+                          style: Theme.of(context).textTheme.titleSmall?.copyWith(color: widget.textColor, fontSize: 20.0),
                         );
                       },
                     ),
@@ -88,11 +88,11 @@ class _StatisticsCardState extends State<StatisticsCard> {
                             builder: (BuildContext context, AsyncSnapshot snapshot) {
                               return Text(
                                 snapshot.hasData
-                                    ? ((widget.secondaryPrefix != null ? widget.secondaryPrefix! + " " : "") +
+                                    ? ((widget.secondaryPrefix != null ? '${widget.secondaryPrefix!} ' : '') +
                                         snapshot.data.toString() +
-                                        (widget.secondarySuffix != null ? " " + widget.secondarySuffix! : ""))
-                                    : "...",
-                                style: Theme.of(context).textTheme.subtitle2?.copyWith(color: widget.textColor),
+                                        (widget.secondarySuffix != null ? ' ${widget.secondarySuffix!}' : ''))
+                                    : '...',
+                                style: Theme.of(context).textTheme.titleSmall?.copyWith(color: widget.textColor),
                               );
                             },
                           )
@@ -134,11 +134,12 @@ class _StatisticsCardState extends State<StatisticsCard> {
                                       touchTooltipData: LineTouchTooltipData(
                                         fitInsideHorizontally: true,
                                         fitInsideVertically: true,
-                                        tooltipBgColor: widget.textColor.withOpacity(0.8),
+                                        getTooltipColor: (LineBarSpot touchedSpot) => widget.textColor.withValues(alpha: 0.8),
                                         getTooltipItems: (touchedSpots) {
                                           return touchedSpots.map<LineTooltipItem>((touchedSpot) {
+                                            DateTime date = DateTime.now().subtract(Duration(days: 89 - touchedSpot.x.toInt()));
                                             return LineTooltipItem(
-                                              "Day ${(touchedSpot.x + 1).toInt()}: " + touchedSpot.y.toInt().toString(),
+                                              '${date.day}/${date.month}/${date.year}: ${touchedSpot.y.toInt()}',
                                               const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
                                             );
                                           }).toList();
@@ -150,14 +151,12 @@ class _StatisticsCardState extends State<StatisticsCard> {
                                         spots: spots,
                                         isCurved: true,
                                         isStrokeCapRound: true,
-                                        colors: [widget.textColor],
+                                        color: widget.textColor,
                                         barWidth: 2,
                                         dotData: FlDotData(show: false),
                                         belowBarData: BarAreaData(
                                           show: true,
-                                          colors: [
-                                            widget.textColor,
-                                          ].map((color) => color.withOpacity(0.3)).toList(),
+                                          color: widget.textColor.withValues(alpha: 0.3),
                                         ),
                                       ),
                                     ],

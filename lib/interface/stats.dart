@@ -1,31 +1,29 @@
 import 'dart:math';
 import 'dart:core';
 
-import 'package:adguardhome_client/interface/adguardhome.dart';
+import 'package:adguard_home_client/interface/adguardhome.dart';
 
 class AdGuardHomeStats {
   final AdGuardHome _adGuardHome;
   AdGuardHomeStats(this._adGuardHome);
 
-  /* Provides stats of AdGuard Home. */
-
   Future<Map<String, dynamic>> fullReport() async {
     return {
-      "DNS queries": await dnsQueries(),
-      "Blocked DNS queries": await blockedFiltering(),
-      "Blocked percentage ratio of DNS queries": await blockedPercentage(),
-      "Blocked pages by safe browsing": await replacedSafebrowsing(),
-      "Blocked pages by parental control": await replacedParental(),
-      "Enforced safe searches": await replacedSafesearch(),
-      "Average processing time of DNS queries (in ms)": await avgProcessingTime(),
-      "Time period to keep data (in days)": await period(),
-      "Top queried domains": await topQueriedDomains(),
-      "Top blocked domains": await topBlockedDomains(),
-      "Top clients": await topClients(),
-      "DNS queries per day": await dnsQueriesPerDay(),
-      "Blocked DNS queries per day": await blockedFilteringPerDay(),
-      "Blocked pages by safe browsing per day": await replacedSafebrowsingPerDay(),
-      "Blocked pages by parental control per day": await replacedParentalPerDay(),
+      'DNS queries': await dnsQueries(),
+      'Blocked DNS queries': await blockedFiltering(),
+      'Blocked percentage ratio of DNS queries': await blockedPercentage(),
+      'Blocked pages by safe browsing': await replacedSafebrowsing(),
+      'Blocked pages by parental control': await replacedParental(),
+      'Enforced safe searches': await replacedSafesearch(),
+      'Average processing time of DNS queries (in ms)': await avgProcessingTime(),
+      'Time period to keep data (in days)': await period(),
+      'Top queried domains': await topQueriedDomains(),
+      'Top blocked domains': await topBlockedDomains(),
+      'Top clients': await topClients(),
+      'DNS queries per day': await dnsQueriesPerDay(),
+      'Blocked DNS queries per day': await blockedFilteringPerDay(),
+      'Blocked pages by safe browsing per day': await replacedSafebrowsingPerDay(),
+      'Blocked pages by parental control per day': await replacedParentalPerDay(),
     };
   }
 
@@ -35,8 +33,9 @@ class AdGuardHomeStats {
         Returns:
             The number of DNS queries performed by the AdGuard Home instance.
         */
-    Map<String, dynamic> response = await _adGuardHome.request("stats");
-    return response["num_dns_queries"];
+    Map<String, dynamic> response = await _adGuardHome.request('stats');
+    if (response['num_dns_queries'] == null) return 0;
+    return response['num_dns_queries'];
   }
 
   Future<int> blockedFiltering() async {
@@ -45,8 +44,9 @@ class AdGuardHomeStats {
         Returns:
             The number of DNS queries blocked by the AdGuard Home instance.
         */
-    Map<String, dynamic> response = await _adGuardHome.request("stats");
-    return response["num_blocked_filtering"];
+    Map<String, dynamic> response = await _adGuardHome.request('stats');
+    if (response['num_blocked_filtering'] == null) return 0;
+    return response['num_blocked_filtering'];
   }
 
   Future<double> blockedPercentage() async {
@@ -56,9 +56,9 @@ class AdGuardHomeStats {
             The percentage ratio of blocked DNS queries by the AdGuard Home
             instance.
         */
-    Map<String, dynamic> response = await _adGuardHome.request("stats");
-    if (response["num_dns_queries"] == null) return 0.0;
-    return round((response["num_blocked_filtering"] / response["num_dns_queries"]) * 100.0, 2);
+    Map<String, dynamic> response = await _adGuardHome.request('stats');
+    if (response['num_dns_queries'] == null || response['num_blocked_filtering'] == null) return 0;
+    return round((response['num_blocked_filtering'] / response['num_dns_queries']) * 100.0, 2);
   }
 
   Future<int> replacedSafebrowsing() async {
@@ -68,8 +68,9 @@ class AdGuardHomeStats {
             The number of times a page was blocked by the safe
             browsing feature of the AdGuard Home instance.
         */
-    Map<String, dynamic> response = await _adGuardHome.request("stats");
-    return response["num_replaced_safebrowsing"];
+    Map<String, dynamic> response = await _adGuardHome.request('stats');
+    if (response['num_replaced_safebrowsing'] == null) return 0;
+    return response['num_replaced_safebrowsing'];
   }
 
   Future<int> replacedParental() async {
@@ -79,8 +80,9 @@ class AdGuardHomeStats {
             The number of times a page was blocked by the parental control
             feature of the AdGuard Home instance.
         */
-    Map<String, dynamic> response = await _adGuardHome.request("stats");
-    return response["num_replaced_parental"];
+    Map<String, dynamic> response = await _adGuardHome.request('stats');
+    if (response['num_replaced_parental'] == null) return 0;
+    return response['num_replaced_parental'];
   }
 
   Future<int> replacedSafesearch() async {
@@ -90,8 +92,9 @@ class AdGuardHomeStats {
             The number of times a safe search was enforced by the
             AdGuard Home instance.
         */
-    Map<String, dynamic> response = await _adGuardHome.request("stats");
-    return response["num_replaced_safesearch"];
+    Map<String, dynamic> response = await _adGuardHome.request('stats');
+    if (response['num_replaced_safesearch'] == null) return 0;
+    return response['num_replaced_safesearch'];
   }
 
   Future<double> avgProcessingTime() async {
@@ -101,9 +104,9 @@ class AdGuardHomeStats {
             The averages processing time (in milliseconds) of DNS queries
             as performed by the AdGuard Home instance.
         */
-    Map<String, dynamic> response = await _adGuardHome.request("stats");
-    if (response["num_dns_queries"] == null) return 0.0;
-    return round(response["avg_processing_time"] * 1000, 2);
+    Map<String, dynamic> response = await _adGuardHome.request('stats');
+    if (response['num_dns_queries'] == null || response['avg_processing_time'] == null) return 0;
+    return round(response['avg_processing_time'] * 1000, 2);
   }
 
   Future<int> period() async {
@@ -112,8 +115,9 @@ class AdGuardHomeStats {
         Returns:
             The time period of data this AdGuard Home instance keeps.
         */
-    Map<String, dynamic> response = await _adGuardHome.request("stats_info");
-    return response["interval"];
+    Map<String, dynamic> response = await _adGuardHome.request('stats_info');
+    if (response['interval'] == null) return 0;
+    return response['interval'];
   }
 
   Future<Map<String, int>> topQueriedDomains() async {
@@ -122,12 +126,14 @@ class AdGuardHomeStats {
         Returns:
             The top queried domains as a Map<String, int>.
         */
-    Map<String, dynamic> response = await _adGuardHome.request("stats");
+    Map<String, dynamic> response = await _adGuardHome.request('stats');
     Map<String, int> topQueriedDomains = {};
-    response["top_queried_domains"].forEach((i) {
-      Map<String, dynamic> topDomain = Map<String, dynamic>.from(i);
-      topQueriedDomains[topDomain.entries.first.key] = topDomain.entries.first.value;
-    });
+    if (response['top_queried_domains'] != null) {
+      response['top_queried_domains'].forEach((i) {
+        Map<String, dynamic> topDomain = Map<String, dynamic>.from(i);
+        topQueriedDomains[topDomain.entries.first.key] = topDomain.entries.first.value;
+      });
+    }
     return topQueriedDomains;
   }
 
@@ -137,12 +143,14 @@ class AdGuardHomeStats {
         Returns:
             The top blocked domains as a Map<String, int>.
         */
-    Map<String, dynamic> response = await _adGuardHome.request("stats");
+    Map<String, dynamic> response = await _adGuardHome.request('stats');
     Map<String, int> topBlockedDomains = {};
-    response["top_blocked_domains"].forEach((i) {
-      Map<String, dynamic> topDomain = Map<String, dynamic>.from(i);
-      topBlockedDomains[topDomain.entries.first.key] = topDomain.entries.first.value;
-    });
+    if (response['top_blocked_domains'] != null) {
+      response['top_blocked_domains'].forEach((i) {
+        Map<String, dynamic> topDomain = Map<String, dynamic>.from(i);
+        topBlockedDomains[topDomain.entries.first.key] = topDomain.entries.first.value;
+      });
+    }
     return topBlockedDomains;
   }
 
@@ -152,12 +160,14 @@ class AdGuardHomeStats {
         Returns:
             The top clients as a Map<String, int>.
         */
-    Map<String, dynamic> response = await _adGuardHome.request("stats");
+    Map<String, dynamic> response = await _adGuardHome.request('stats');
     Map<String, int> topClients = {};
-    response["top_clients"].forEach((i) {
-      Map<String, dynamic> topClient = Map<String, dynamic>.from(i);
-      topClients[topClient.entries.first.key] = topClient.entries.first.value;
-    });
+    if (response['top_clients'] != null) {
+      response['top_clients'].forEach((i) {
+        Map<String, dynamic> topClient = Map<String, dynamic>.from(i);
+        topClients[topClient.entries.first.key] = topClient.entries.first.value;
+      });
+    }
     return topClients;
   }
 
@@ -167,11 +177,13 @@ class AdGuardHomeStats {
         Returns:
             The number of DNS queries per day as a list of integers.
         */
-    Map<String, dynamic> response = await _adGuardHome.request("stats");
+    Map<String, dynamic> response = await _adGuardHome.request('stats');
     List<int> dnsQueriesPerDay = [];
-    response["dns_queries"].forEach((i) {
-      dnsQueriesPerDay.add(i);
-    });
+    if (response['dns_queries'] != null) {
+      response['dns_queries'].forEach((i) {
+        dnsQueriesPerDay.add(i);
+      });
+    }
     return dnsQueriesPerDay;
   }
 
@@ -181,11 +193,13 @@ class AdGuardHomeStats {
         Returns:
             The number of blocked DNS queries per day as a list of integers.
         */
-    Map<String, dynamic> response = await _adGuardHome.request("stats");
+    Map<String, dynamic> response = await _adGuardHome.request('stats');
     List<int> blockedFilteringPerDay = [];
-    response["blocked_filtering"].forEach((i) {
-      blockedFilteringPerDay.add(i);
-    });
+    if (response['blocked_filtering'] != null) {
+      response['blocked_filtering'].forEach((i) {
+        blockedFilteringPerDay.add(i);
+      });
+    }
     return blockedFilteringPerDay;
   }
 
@@ -196,11 +210,13 @@ class AdGuardHomeStats {
             The number of blocked pages by safe browsing per day as a list of
             integers.
         */
-    Map<String, dynamic> response = await _adGuardHome.request("stats");
+    Map<String, dynamic> response = await _adGuardHome.request('stats');
     List<int> replacedSafebrowsingPerDay = [];
-    response["replaced_safebrowsing"].forEach((i) {
-      replacedSafebrowsingPerDay.add(i);
-    });
+    if (response['replaced_safebrowsing'] != null) {
+      response['replaced_safebrowsing'].forEach((i) {
+        replacedSafebrowsingPerDay.add(i);
+      });
+    }
     return replacedSafebrowsingPerDay;
   }
 
@@ -211,11 +227,13 @@ class AdGuardHomeStats {
             The number of blocked pages by parental control per day as a list
             of integers.
         */
-    Map<String, dynamic> response = await _adGuardHome.request("stats");
+    Map<String, dynamic> response = await _adGuardHome.request('stats');
     List<int> replacedParentalPerDay = [];
-    response["replaced_parental"].forEach((i) {
-      replacedParentalPerDay.add(i);
-    });
+    if (response['replaced_parental'] != null) {
+      response['replaced_parental'].forEach((i) {
+        replacedParentalPerDay.add(i);
+      });
+    }
     return replacedParentalPerDay;
   }
 
@@ -226,9 +244,9 @@ class AdGuardHomeStats {
             AdGuardHomeError: Restting the AdGuard Home stats did not succeed.
         */
     try {
-      _adGuardHome.request("stats_reset", method: "POST");
+      _adGuardHome.request('stats_reset', method: 'POST');
     } catch (e) {
-      print("AdGuardHomeError: Restting the AdGuard Home stats did not succeed.");
+      print('AdGuardHomeError: Restting the AdGuard Home stats did not succeed.');
     }
   }
 

@@ -1,4 +1,4 @@
-import 'package:adguardhome_client/main.dart';
+import 'package:adguard_home_client/main.dart';
 import 'package:flutter/material.dart';
 
 class StatisticsTableCard extends StatefulWidget {
@@ -12,7 +12,7 @@ class StatisticsTableCard extends StatefulWidget {
   final Future<int>? totalFuture;
 
   const StatisticsTableCard({
-    Key? key,
+    super.key,
     required this.title,
     this.textColor = Colors.black,
     this.backgroundColor = Colors.white,
@@ -21,10 +21,10 @@ class StatisticsTableCard extends StatefulWidget {
     required this.valueColumn,
     required this.future,
     this.totalFuture,
-  }) : super(key: key);
+  });
 
   @override
-  _StatisticsTableCardState createState() => _StatisticsTableCardState();
+  State<StatisticsTableCard> createState() => _StatisticsTableCardState();
 }
 
 class _StatisticsTableCardState extends State<StatisticsTableCard> {
@@ -78,7 +78,7 @@ class _StatisticsTableCardState extends State<StatisticsTableCard> {
             child: const Padding(
               padding: EdgeInsets.only(right: 16.0),
               child: Text(
-                "",
+                '',
                 overflow: TextOverflow.visible,
                 softWrap: true,
               ),
@@ -114,7 +114,7 @@ class _StatisticsTableCardState extends State<StatisticsTableCard> {
                 Expanded(
                   child: Text(
                     widget.title,
-                    style: Theme.of(context).textTheme.headline6?.copyWith(color: widget.textColor),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(color: widget.textColor),
                   ),
                 ),
               ],
@@ -134,12 +134,13 @@ class _StatisticsTableCardState extends State<StatisticsTableCard> {
                               return DataTable(
                                 horizontalMargin: 0,
                                 columnSpacing: 0,
-                                headingRowColor: MaterialStateProperty.all<Color>(widget.textColor.withOpacity(0.2)),
+                                headingRowColor: WidgetStateProperty.all<Color>(widget.textColor.withValues(alpha: 0.2)),
                                 columns: getColumns(constraints),
                                 rows: snapshot.data.entries.map<DataRow>((row) {
                                   List<DataCell> cells = [
                                     DataCell(
                                       SizedBox(
+                                        width: constraints.maxWidth * (totalFuture != null ? 0.6 : 0.8),
                                         child: Padding(
                                           padding: const EdgeInsets.only(left: 16.0),
                                           child: Text(
@@ -148,11 +149,11 @@ class _StatisticsTableCardState extends State<StatisticsTableCard> {
                                             softWrap: true,
                                           ),
                                         ),
-                                        width: constraints.maxWidth * (totalFuture != null ? 0.6 : 0.8),
                                       ),
                                     ),
                                     DataCell(
                                       SizedBox(
+                                        width: constraints.maxWidth * .2,
                                         child: Padding(
                                           padding: totalFuture != null ? const EdgeInsets.all(0) : const EdgeInsets.only(right: 16.0),
                                           child: Text(
@@ -162,20 +163,20 @@ class _StatisticsTableCardState extends State<StatisticsTableCard> {
                                             textAlign: TextAlign.end,
                                           ),
                                         ),
-                                        width: constraints.maxWidth * .2,
                                       ),
                                     ),
                                   ];
                                   if (totalFuture != null) {
                                     cells.add(DataCell(
                                       SizedBox(
+                                        width: constraints.maxWidth * .2,
                                         child: Padding(
                                           padding: const EdgeInsets.only(right: 16.0),
                                           child: FutureBuilder(
                                             future: totalFuture,
                                             builder: (BuildContext context, AsyncSnapshot snapshot) {
                                               return Text(
-                                                snapshot.hasData ? adGuardHome!.stats.round(((row.value / snapshot.data) * 100), 1).toString() + " %" : "",
+                                                snapshot.hasData ? '${adGuardHome!.stats.round(((row.value / snapshot.data) * 100), 1)} %' : '',
                                                 overflow: TextOverflow.visible,
                                                 softWrap: true,
                                                 textAlign: TextAlign.end,
@@ -183,7 +184,6 @@ class _StatisticsTableCardState extends State<StatisticsTableCard> {
                                             },
                                           ),
                                         ),
-                                        width: constraints.maxWidth * .2,
                                       ),
                                     ));
                                   }
