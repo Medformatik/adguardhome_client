@@ -71,7 +71,7 @@ class _SettingsPageState extends State<SettingsPage> {
             child: FutureBuilder<String?>(
               future: password,
               builder: (BuildContext context, AsyncSnapshot<String?> snapshot) {
-                if (!snapshot.hasData) {
+                if (snapshot.connectionState != ConnectionState.done) {
                   return const Center(child: CircularProgressIndicator());
                 }
                 return Form(
